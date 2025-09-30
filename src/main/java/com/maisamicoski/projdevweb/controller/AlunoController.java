@@ -4,6 +4,9 @@ package com.maisamicoski.projdevweb.controller;
 import com.maisamicoski.projdevweb.model.Aluno;
 import com.maisamicoski.projdevweb.service.AlunoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +44,19 @@ public class AlunoController {
         alunoService.removerAlunoPorId(id);
         return ResponseEntity.ok().build();
     }
-
+    // http://localhost:8080/produtos/paginacao?pagina=0&tamanho=5
+    @GetMapping("paginacao")
+    public ResultadoPaginado<Aluno> recuperarAlunosComPaginacao(
+            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+            @RequestParam(name = "tamanho", defaultValue = "5") int tamanho
+    ) {
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+        Page<Aluno> page = alunoService.recuperarAlunosComPaginacao(pageable);
+        return new ResultadoPaginado<Aluno>(
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.getNumber(),
+                page.getContent());
+    }
 
 }

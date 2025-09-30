@@ -24,9 +24,15 @@ public class Turma {
     @OneToMany(mappedBy = "turma")
     private List<Inscricao> inscricoes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "professor_id")
     private Professor professor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "disciplina_id")
+    private Disciplina disciplina;
+
+
     public Turma(){}
     public Turma(int ano, int periodo) {
         this.ano = ano;
@@ -72,5 +78,13 @@ public class Turma {
 
     public void setProfessor(Professor professor) {
         this.professor = professor;
+    }
+
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
+
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
     }
 }

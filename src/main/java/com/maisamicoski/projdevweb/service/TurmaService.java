@@ -1,21 +1,25 @@
 package com.maisamicoski.projdevweb.service;
 
 import com.maisamicoski.projdevweb.exception.EntidadeNaoEncontradaException;
-import com.maisamicoski.projdevweb.model.Inscricao;
-import com.maisamicoski.projdevweb.model.Professor;
-import com.maisamicoski.projdevweb.model.Turma;
+import com.maisamicoski.projdevweb.model.*;
+import com.maisamicoski.projdevweb.repository.DisciplinaRepository;
 import com.maisamicoski.projdevweb.repository.InscricaoRepository;
 import com.maisamicoski.projdevweb.repository.ProfessorRepository;
 import com.maisamicoski.projdevweb.repository.TurmaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TurmaService {
 
     @Autowired
     private ProfessorRepository professorRepository;
-
+    @Autowired
+    private DisciplinaRepository disciplinaRepository;
     private final TurmaRepository turmaRepository;
 
     public TurmaService(TurmaRepository turmaRepository) {
@@ -41,5 +45,28 @@ public class TurmaService {
         turma.setProfessor(professor);
 
         return turmaRepository.save(turma);
+    }
+    public Turma associarDisciplina(Long turmaId, Long disciplinaId) {
+
+        Turma turma = turmaRepository.findById(turmaId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Turma não encontrada!"));
+
+        Disciplina disciplina = disciplinaRepository.findById(disciplinaId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Disciplina não encontrado!"));
+
+        turma.setDisciplina(disciplina);
+
+        return turmaRepository.save(turma);
+    }
+    public Page<Turma> recuperarTurmasComPaginacao(Pageable pageable) {
+        return turmaRepository.recuperarTurmasComPaginacao(pageable);
+    }
+    public List<Turma> recuperarTurmas() {
+        return turmaRepository.recuperarTurmas();
+    }
+    public Turma recuperarTurmaPorId(Long id) {
+        return turmaRepository.recuperarTurmaPorIdComLock(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(
+                        "Turma com id = " + id + " não encontrado."));
     }
 }

@@ -7,6 +7,8 @@ import com.maisamicoski.projdevweb.repository.AlunoRepository;
 import com.maisamicoski.projdevweb.repository.InscricaoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,6 +46,9 @@ public class AlunoService {
     public void removerAlunoPorId(Long id) {
         Aluno aluno = recuperarAlunoPorId(id);
         alunoRepository.delete(aluno);
+    }
+    public Page<Aluno> recuperarAlunosComPaginacao(Pageable pageable) {
+        return alunoRepository.recuperarAlunosComPaginacao(pageable);
     }
 
 }
