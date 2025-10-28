@@ -19,8 +19,9 @@ public class Turma {
     private Long id;
     private int ano;
     private int periodo;
+    private String nome;
 
-    @JsonIgnore
+    //@JsonIgnore
     @OneToMany(mappedBy = "turma")
     private List<Inscricao> inscricoes;
 
@@ -34,10 +35,19 @@ public class Turma {
 
 
     public Turma(){}
-    public Turma(int ano, int periodo) {
+    public Turma(int ano, int periodo, String nome) {
         this.ano = ano;
         this.periodo = periodo;
+        this.nome = nome;
         this.inscricoes = new ArrayList<>();
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public Long getId() {

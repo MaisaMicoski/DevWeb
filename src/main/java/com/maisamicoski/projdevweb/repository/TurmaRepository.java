@@ -2,6 +2,7 @@ package com.maisamicoski.projdevweb.repository;
 
 
 import com.maisamicoski.projdevweb.model.Aluno;
+import com.maisamicoski.projdevweb.model.Inscricao;
 import com.maisamicoski.projdevweb.model.Turma;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,4 +29,8 @@ public interface TurmaRepository extends JpaRepository<Turma, Long> {
 
     @Query("SELECT a FROM Turma a WHERE a.id = :id")
     Optional<Turma> recuperarTurmaPorIdComLock(@Param("id") Long id);
+
+    Page<Turma> findByNomeStartingWithIgnoreCase(String nome, Pageable pageable);
+    //List<Inscricao> findByTurmaId(Long turmaId);
+
 }

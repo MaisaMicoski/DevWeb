@@ -1,5 +1,7 @@
 package com.maisamicoski.projdevweb.service;
 
+import com.maisamicoski.projdevweb.controller.AlunoDTO;
+import com.maisamicoski.projdevweb.controller.TurmaDTO;
 import com.maisamicoski.projdevweb.exception.EntidadeNaoEncontradaException;
 import com.maisamicoski.projdevweb.model.*;
 import com.maisamicoski.projdevweb.repository.DisciplinaRepository;
@@ -10,8 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TurmaService {
@@ -20,6 +25,8 @@ public class TurmaService {
     private ProfessorRepository professorRepository;
     @Autowired
     private DisciplinaRepository disciplinaRepository;
+    @Autowired
+    private InscricaoRepository inscricaoRepository;
     private final TurmaRepository turmaRepository;
 
     public TurmaService(TurmaRepository turmaRepository) {
@@ -58,9 +65,19 @@ public class TurmaService {
 
         return turmaRepository.save(turma);
     }
-    public Page<Turma> recuperarTurmasComPaginacao(Pageable pageable) {
-        return turmaRepository.recuperarTurmasComPaginacao(pageable);
+//    public Page<Turma> recuperarTurmasComPaginacao(Pageable pageable) {
+//        return turmaRepository.recuperarTurmasComPaginacao(pageable);
+//    }
+@Transactional(readOnly = true)
+public Page<TurmaDTO> recuperarTurmasComPaginacao(String nome, Pageable pageable) {
+    Page<Turma> pageDeTurmas;
+    if (StringUtils.hasText(nome)) {
+        pageDeTurmas = turmaRepository.findByNomeStartingWithIgnoreCase(nome, pageable);
+    } else {
+        pageDeTurmas = turmaRepository.findAll(pageable);
     }
+    return pageDeTurmas.map(TurmaDTO::new);
+}
     public List<Turma> recuperarTurmas() {
         return turmaRepository.recuperarTurmas();
     }
@@ -68,5 +85,33 @@ public class TurmaService {
         return turmaRepository.recuperarTurmaPorIdComLock(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException(
                         "Turma com id = " + id + " não encontrado."));
+    }
+
+//    @Transactional(readOnly = true)
+//    public List<AlunoDTO> recuperarAlunosPorTurma(Long turmaId) {
+//        List<Inscricao> inscricoes = inscricaoRepository.findByTurmaId(turmaId);
+//
+//        // Mapeia a lista de inscrições para uma lista de DTOs de Aluno
+//        return inscricoes.stream()
+//                .map(inscricao -> {
+//                    Aluno aluno = inscricao.getAluno(); // Aqui ainda pode ser um proxy
+//                    // Mas, ao criar o DTO, você acessa os getters, forçando o Hibernate a buscar os dados
+//                    return new AlunoDTO(aluno.getId(), aluno.getNome(), aluno.getEmail());
+//                })
+//                .collect(Collectors.toList());
+//    }
+    @Transactional(readOnly = true)
+    public Page<AlunoDTO> recuperarAlunosPorTurmaPaginado(Long turmaId, Pageable pageable) {
+
+        Page<Inscricao> inscricoesPaginadas = inscricaoRepository.findByTurmaId(turmaId, pageable);
+        System.out.println("Encontradas " + inscricoesPaginadas.getTotalElements() + " inscrições para a turma ID: " + turmaId);
+        return inscricoesPaginadas.map(inscricao -> new AlunoDTO(inscricao.getAluno()));
+    }
+    @Transactional(readOnly = true)
+    public TurmaDTO recuperarDetalhesDaTurma(Long id) {
+        Turma turma = turmaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Turma com id = " + id + " não encontrada."));
+
+        return new TurmaDTO(turma);
     }
 }

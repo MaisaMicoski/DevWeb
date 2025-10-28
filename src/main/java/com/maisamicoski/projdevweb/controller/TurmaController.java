@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//@CrossOrigin("http://localhost:5173")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("turmas")
+@RequestMapping("/api/turmas")
 public class TurmaController {
 
     @Autowired
@@ -44,32 +45,57 @@ public class TurmaController {
 
         return turmaService.cadastrarTurma(turma);
     }
-    @GetMapping
-    public List<Turma> recuperarTurmas(){return turmaService.recuperarTurmas();}
+//    @GetMapping
+//    public List<Turma> recuperarTurmas(){return turmaService.recuperarTurmas();}
 
     @DeleteMapping("{idTurma}")
     public ResponseEntity<Void> removerTurmaPorId(@PathVariable("idTurma") Long id) {
         turmaService.removerTurmaPorId(id);
         return ResponseEntity.ok().build();
     }
-    @GetMapping("paginacao")
-    public ResultadoPaginado<Turma> recuperarTurmasComPaginacao(
-            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
-            @RequestParam(name = "tamanho", defaultValue = "5") int tamanho
-    ) {
-        Pageable pageable = PageRequest.of(pagina, tamanho);
-        Page<Turma> page = turmaService.recuperarTurmasComPaginacao(pageable);
-        return new ResultadoPaginado<Turma>(
-                page.getTotalElements(),
-                page.getTotalPages(),
-                page.getNumber(),
-                page.getContent());
-    }
-//    @GetMapping("{idTurma}")
-//    public ResponseEntity<TurmaDTO> recuperarAlunoPorId(@PathVariable ("idAluno") Long id){
-//        Aluno aluno = alunoService.recuperarAlunoPorId(id);
-//        AlunoDTO alunoDTO = new AlunoDTO(aluno.getId(), aluno.getNome(), aluno.getEmail());
-//        System.out.println(alunoDTO.id());
-//        return ResponseEntity.ok(alunoDTO);
+//    @GetMapping("paginacao")
+//    public ResultadoPaginado<Turma> recuperarTurmasComPaginacao(
+//            @RequestParam(name = "nome", defaultValue = "") String nome,
+//            @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+//            @RequestParam(name = "tamanho", defaultValue = "5") int tamanho
+//    ) {
+//        Pageable pageable = PageRequest.of(pagina, tamanho);
+//        Page<Turma> page = turmaService.recuperarTurmasComPaginacao(nome, pageable);
+//        return new ResultadoPaginado<Turma>(
+//                page.getTotalElements(),
+//                page.getTotalPages(),
+//                page.getNumber(),
+//                page.getContent());
 //    }
+// Em TurmaController.java
+@GetMapping
+public ResponseEntity<Page<TurmaDTO>> recuperarTurmasComPaginacao(
+        @RequestParam(name = "nome", defaultValue = "") String nome,
+        Pageable pageable) {
+
+    Page<TurmaDTO> pageDto = turmaService.recuperarTurmasComPaginacao(nome, pageable);
+    return ResponseEntity.ok(pageDto);
+}
+    @GetMapping("{idTurma}")
+    public ResponseEntity<TurmaDTO> recuperarTurmaPorId(@PathVariable ("idTurma")Long id) {
+        TurmaDTO turmaDto = turmaService.recuperarDetalhesDaTurma(id);
+        return ResponseEntity.ok(turmaDto);
+    }
+    @GetMapping("/{id}/alunos")
+    public ResponseEntity<Page<AlunoDTO>> recuperarAlunosDaTurmaPaginado(
+            @PathVariable Long id,
+            Pageable pageable) {
+
+        Page<AlunoDTO> alunosDtoPage = turmaService.recuperarAlunosPorTurmaPaginado(id, pageable);
+        return ResponseEntity.ok(alunosDtoPage);
+    }
+//    @GetMapping("/{idTurma}/alunos")
+//    public ResponseEntity<List<AlunoDTO>> recuperarAlunosDaTurma(@PathVariable ("idTurma") Long id) {
+//        List<AlunoDTO> alunosDto = turmaService.recuperarAlunosPorTurma(id);
+//        return ResponseEntity.ok(alunosDto);
+//    }
+//    @GetMapping("/{turmaId}/recuperar-alunos-por-inscricoes")
+//    public List<Aluno> recuperarAlunosPorInscricoes(
+//            @RequestBody()
+ //   )
 }

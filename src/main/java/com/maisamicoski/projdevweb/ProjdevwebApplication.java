@@ -14,6 +14,7 @@ import com.maisamicoski.projdevweb.service.TurmaService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.maisamicoski.projdevweb.config.WebConfig;
+import com.maisamicoski.projdevweb.config.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 
@@ -316,8 +317,8 @@ public class ProjdevwebApplication implements CommandLineRunner {
 					System.out.print("Período da Turma: ");
 					int periodo = scanner.nextInt();
 					scanner.nextLine();
-					Turma novaTurma = new Turma(ano, periodo);
-					turmaService.cadastrarTurma(novaTurma);
+					//Turma novaTurma = new Turma(ano, periodo);
+					//turmaService.cadastrarTurma(novaTurma);
 					System.out.println("Turma cadastrada com sucesso!");
 					break;
 				case 2:

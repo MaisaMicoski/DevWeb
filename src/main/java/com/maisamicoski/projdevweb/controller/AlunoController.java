@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("http://localhost:5173")
+//@CrossOrigin("http://localhost:5173")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("alunos")
+@RequestMapping("/api/alunos")
 public class AlunoController {
     private final AlunoService alunoService;
 
