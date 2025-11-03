@@ -87,19 +87,24 @@ public Page<TurmaDTO> recuperarTurmasComPaginacao(String nome, Pageable pageable
                         "Turma com id = " + id + " não encontrado."));
     }
 
-//    @Transactional(readOnly = true)
-//    public List<AlunoDTO> recuperarAlunosPorTurma(Long turmaId) {
-//        List<Inscricao> inscricoes = inscricaoRepository.findByTurmaId(turmaId);
-//
-//        // Mapeia a lista de inscrições para uma lista de DTOs de Aluno
-//        return inscricoes.stream()
-//                .map(inscricao -> {
-//                    Aluno aluno = inscricao.getAluno(); // Aqui ainda pode ser um proxy
-//                    // Mas, ao criar o DTO, você acessa os getters, forçando o Hibernate a buscar os dados
-//                    return new AlunoDTO(aluno.getId(), aluno.getNome(), aluno.getEmail());
-//                })
-//                .collect(Collectors.toList());
-//    }
+    @Transactional(readOnly = true)
+    public List<AlunoDTO> recuperarAlunosPorTurma(Long turmaId) {
+        List<Inscricao> inscricoes = inscricaoRepository.findByTurmaId(turmaId);
+        return inscricoes.stream()
+                .map(inscricao -> {
+                    Aluno aluno = inscricao.getAluno();
+                    return new AlunoDTO(aluno.getId(), aluno.getNome(), aluno.getEmail());
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TurmaDTO> recuperarTodasAsTurmas() {
+
+        return turmaRepository.findAll().stream()
+                .map(TurmaDTO::new)
+                .collect(Collectors.toList());
+    }
     @Transactional(readOnly = true)
     public Page<AlunoDTO> recuperarAlunosPorTurmaPaginado(Long turmaId, Pageable pageable) {
 

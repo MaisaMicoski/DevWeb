@@ -31,6 +31,7 @@ public interface TurmaRepository extends JpaRepository<Turma, Long> {
     Optional<Turma> recuperarTurmaPorIdComLock(@Param("id") Long id);
 
     Page<Turma> findByNomeStartingWithIgnoreCase(String nome, Pageable pageable);
-    //List<Inscricao> findByTurmaId(Long turmaId);
+
+
 
 }

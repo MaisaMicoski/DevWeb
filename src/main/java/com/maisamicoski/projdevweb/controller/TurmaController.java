@@ -48,6 +48,11 @@ public class TurmaController {
 //    @GetMapping
 //    public List<Turma> recuperarTurmas(){return turmaService.recuperarTurmas();}
 
+    @GetMapping("/todas")
+    public ResponseEntity<List<TurmaDTO>> recuperarTodasAsTurmas() {
+        List<TurmaDTO> turmas = turmaService.recuperarTodasAsTurmas();
+        return ResponseEntity.ok(turmas);
+    }
     @DeleteMapping("{idTurma}")
     public ResponseEntity<Void> removerTurmaPorId(@PathVariable("idTurma") Long id) {
         turmaService.removerTurmaPorId(id);
@@ -67,7 +72,7 @@ public class TurmaController {
 //                page.getNumber(),
 //                page.getContent());
 //    }
-// Em TurmaController.java
+ //Em TurmaController.java
 @GetMapping
 public ResponseEntity<Page<TurmaDTO>> recuperarTurmasComPaginacao(
         @RequestParam(name = "nome", defaultValue = "") String nome,
@@ -88,6 +93,11 @@ public ResponseEntity<Page<TurmaDTO>> recuperarTurmasComPaginacao(
 
         Page<AlunoDTO> alunosDtoPage = turmaService.recuperarAlunosPorTurmaPaginado(id, pageable);
         return ResponseEntity.ok(alunosDtoPage);
+    }
+    @GetMapping("/{idTurma}/alunos/todos")
+    public ResponseEntity<List<AlunoDTO>> recuperarTodosAlunosDaTurma(@PathVariable("idTurma") Long id) {
+        List<AlunoDTO> alunosDto = turmaService.recuperarAlunosPorTurma(id);
+        return ResponseEntity.ok(alunosDto);
     }
 //    @GetMapping("/{idTurma}/alunos")
 //    public ResponseEntity<List<AlunoDTO>> recuperarAlunosDaTurma(@PathVariable ("idTurma") Long id) {
