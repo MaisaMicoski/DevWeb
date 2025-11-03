@@ -18,6 +18,6 @@ public interface InscricaoRepository extends JpaRepository<Inscricao, Long> {
     @Query("SELECT i FROM Inscricao i JOIN FETCH i.aluno WHERE i.turma.id = :turmaId")
     List<Inscricao> findInscricoesComAlunosByTurmaId(@Param("turmaId") Long turmaId);
 
-    //List<Inscricao> findByTurmaId(Long turmaId);
+    List<Inscricao> findByTurmaId(Long turmaId);
     Page<Inscricao> findByTurmaId(Long turmaId, Pageable pageable);
 }
